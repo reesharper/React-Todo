@@ -1,16 +1,71 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+
+import TodoList from './components/TodoList'
+import TodoForm from './components/TodoForm'
+import './components/Todo.css'
+
+const todos = [
+  {
+    name: "Add New Items",
+    id: 123,
+    completed: false
+  }
+];
 
 class App extends React.Component {
-  // you will need a place to store your state in this component.
-  // design `App` to be the parent component of your application.
-  // this component is going to take care of state, and any change handlers you need to work with your state
+  constructor() {
+    super();
+    this.state = {
+      todos: todos
+    }
+  }
+
+  handleToggleItem = (itemId)=>{
+    this.setState({
+      todos:this.state.todos.map(item=>{
+        if(item.id === itemId) {
+          return {
+            ...item,
+            completed: !item.completed
+          }
+        } else {
+          return item;
+        }
+      })
+    })
+  }
+
+  handleAddItem = (name) => {
+    this.setState({
+      todos: [...this.state.todos, {
+        name: name,
+        id: this.state.todos.length,
+        completed: false
+      }]
+    })
+  }
+
+  clearItems = () => {
+    this.setState({
+      todos: this.state.todos.filter(item=> (!item.completed))
+    });
+  }
+
   render() {
     return (
-      <div>
-        <h2>Welcome to your Todo App!</h2>
+      <div className="TodoApp">
+          <div className="Header">
+            <h1>Todo List</h1>
+            <TodoForm handleAddItem={this.handleAddItem}/>
+          </div>
+        <TodoList handleClearItems={this.clearItems} handleToggleItem={this.handleToggleItem} todos={this.state.todos} />
       </div>
     );
   }
 }
+
+const rootElement = document.getElementById('root');
+ReactDOM.render(<App />, rootElement);
 
 export default App;
